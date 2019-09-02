@@ -11,7 +11,7 @@ var BookSchema = new Schema({
         required: true
     },
     authors: {
-        type: String,
+        type: [String],
         required: true
     },
     description: {
@@ -26,8 +26,9 @@ var BookSchema = new Schema({
     link: {
         type: String,
         required: true
-    }
-})
+    },
+    googleId: { type: String, required: true, unique: true }
+});
 
 var Book = mongoose.model("Book", BookSchema);
 
