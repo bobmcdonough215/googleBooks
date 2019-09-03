@@ -1,17 +1,19 @@
 import React, { Component } from "react";
+import { Link } from "react-router-dom";
 import Jumbotron from "../../components/Jumbotron";
 import Card from "../../components/Card";
 import Book from "../../components/Book";
-import Footer from "../../components/Footer";
 import API from "../../utils/API";
 import { Col, Row, Container } from "../../components/Grid";
-import { List } from "../../components/List";
-import Navbar from "../../components/Nav";
+import { List, ListItem } from "../../components/List";
+import ClickBtn from "../../components/ClickBtn";
+
 
 
 class Saved extends Component {
   state = {
-    books: []
+    books: [],
+    target: ""
   };
 
   componentDidMount() {
@@ -22,63 +24,61 @@ class Saved extends Component {
     API.getSavedBooks()
       .then(res =>
         this.setState({
-          books: res.data
+          books: res.data,
+          target: "_blank"
         })
       )
       .catch(err => console.log(err));
   };
 
   handleBookDelete = id => {
-    API.deleteBook(id).then(res => this.getSavedBooks());
+    API.deleteBook(id).then(res => this.getSavedBooks())
+      .catch(err => console.log(err));
+
+
   };
 
   render() {
     return (
-      <Container>
-        <Row>
-          <Col size="md-12">
-            <Jumbotron>
-              <h1 className="text-center">
-                <strong>Google Books Search</strong>
-              </h1>
-            </Jumbotron>
-          </Col>
-        </Row>
-        <Row>
-          <Col size="md-12">
-            <Card title="Saved Books" icon="download">
-              {this.state.books.length ? (
-                <List>
-                  {this.state.books.map(book => (
-                    <Book
-                      key={book._id}
-                      title={book.title}
-                      subtitle={book.subtitle}
-                      link={book.link}
-                      authors={book.authors.join(", ")}
-                      description={book.description}
-                      image={book.image}
-                      Button={() => (
-                        <button
-                          onClick={() => this.handleBookDelete(book._id)}
-                          className="btn btn-danger ml-2"
-                        >
-                          Delete
-                        </button>
-                      )}
-                    />
-                  ))}
-                </List>
-              ) : (
-                <h2 className="text-center">No Saved Books</h2>
-              )}
-            </Card>
-          </Col>
-        </Row>
-        <Footer />
-      </Container>
+      <div>
+        <Jumbotron>
+          <h1 className="text-center"><strong>Google Books Search</strong></h1>
+          <Link className="btn btn-default btn-lg" to="/" role="button">New Search</Link>
+          <Link className="btn btn-default btn-lg" to="/saved" role="button">Saved Books</Link>
+        </Jumbotron>
+        <Container>
+          <h2>Search Results</h2>
+          <List>
+            {this.state.books.map(book => (
+              <ListItem key={book._id}>
+                <div className="date-div">
+                  <a
+                    key={book._id + "link"}
+                    href={book.link}
+                    target={this.state.target}
+                  >
+                    {book.title}
+                  </a>
+                  <p>{book.volumeInfo.authors[0]}</p>
+                  <p>{book.volumeInfo.description}</p>
+                  <p>{book.volumeInfo.imageLinks.thumbnail}</p>
+                </div>
+                <ClickBtn
+                  key={book_id + Btn}
+                  btntype="info"
+                  id={book._id}
+                  disabled={book.link === "/"}
+                  onClick={() => this.deleteBook(book._id)}
+
+                >
+                  Delete Book
+                    </ClickBtn>
+                    </ListItem>
+            ))}
+        </List>
+        </Container>
+      </div>
     );
   }
 }
-
 export default Saved;

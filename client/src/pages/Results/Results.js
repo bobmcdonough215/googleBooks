@@ -3,7 +3,7 @@ import React, { Component } from "react";
 import Jumbotron from "../../components/Jumbotron";
 import Card from "../../components/Card";
 import { List, ListItem } from "../../components/List";
-
+import ClickBtn from "../../components/ClickBtn";
 import Book from "../../components/Book";
 import Footer from "../../components/Footer";
 import API from "../../utils/API";
@@ -63,7 +63,7 @@ return (
               {book.volumeInfo.authors[0]}
               {book.volumeInfo.description}
               {book.volumeInfo.imageLinks.thumbnail}
-              <SaveBtn
+              <ClickBtn
                 key={"" + book.id + index}
                 btntype="info"
                 disabled={book.volumeInfo.infoLink === "/"}
@@ -77,7 +77,7 @@ return (
                 })}
               >
                 Save Book
-                  </SaveBtn>
+                  </ClickBtn>
             </div>
           </ListItem>
         ))}
