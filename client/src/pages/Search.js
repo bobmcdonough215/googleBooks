@@ -4,7 +4,7 @@ import Jumbotron from "../components/Jumbotron";
 import Card from "../components/Card";
 import API from "../utils/API";
 import { Col, Row, Container } from "../components/Grid";
-import { List, ListItem } from "../components/List";
+import { List } from "../components/List";
 import SearchForm from "../components/SearchForm";
 import Book from "../components/Book";
 import Footer from "../components/Footer";
@@ -26,16 +26,21 @@ class Search extends Component {
     });
   };
 
-  loadBooks = () => {
+  getBooks = () => {
     API.getBooks(this.state.q)
-      .then(res => this.setState({ books: res.data }))
-      .catch(err => console.log(err));
+      .then(res => this.setState({books: res.data }))
+      .catch(() =>
+      this.setState({
+        books:[],
+        message: "No books found, try again"
+      })
+      );
   };
 
 
   handleFormSubmit = event => {
     event.preventDefault();
-    this.loadBooks();
+    this.getBooks();
   };
 
   handleSave = id => {
@@ -47,7 +52,7 @@ class Search extends Component {
       image: book.volumeInfo.imageLinks.thumbnail,
       link: book.volumeInfo.infoLink,
       googleId: book.id
-    }).then(() => this.loadBooks());
+    }).then(() => this.getBooks());
   };
 
   render() {
