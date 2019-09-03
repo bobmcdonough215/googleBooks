@@ -16,7 +16,7 @@ function SearchForm({q, handleInputChange, handleFormSubmit}) {
           placeholder="The Great Gatsby"
           id="Title"
         />
-        <button onClick={props.handleFormSubmit} type="submit" className="btn btn-success">
+        <button onClick={handleFormSubmit} type="submit" className="btn btn-success">
           Search
         </button>
       </div>

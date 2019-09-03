@@ -1,61 +1,107 @@
+
 import React, { Component } from "react";
+import Jumbotron from "../components/Jumbotron";
+import Card from "../components/Card";
 import API from "../utils/API";
-import Container from "../components/Container";
+import { Col, Row, Container } from "../components/Grid";
+import { List, ListItem } from "../components/List";
 import SearchForm from "../components/SearchForm";
-import SearchResults from "../components/SearchResults";
-import Alert from "../components/Alert";
+import Book from "../components/Book";
+import Footer from "../components/Footer";
 
 class Search extends Component {
   state = {
-    search: "",
-    breeds: [],
-    results: [],
-    error: ""
+    books: [],
+    q: "",
+
   };
 
-  // When the component mounts, get a list of all available base breeds and update this.state.breeds
-  componentDidMount() {
-    API.getBaseBreedsList()
-      .then(res => this.setState({ breeds: res.data.message }))
-      .catch(err => console.log(err));
-  }
 
   handleInputChange = event => {
-    this.setState({ search: event.target.value });
+    // Destructure the name and value properties off of event.target
+    // Update the appropriate state
+    const { name, value } = event.target;
+    this.setState({
+      [name]: value
+    });
   };
+
+  loadBooks = () => {
+    API.getBooks(this.state.q)
+      .then(res => this.setState({ books: res.data }))
+      .catch(err => console.log(err));
+  };
+
 
   handleFormSubmit = event => {
     event.preventDefault();
-    API.getDogsOfBreed(this.state.search)
-      .then(res => {
-        if (res.data.status === "error") {
-          throw new Error(res.data.message);
-        }
-        this.setState({ results: res.data.message, error: "" });
-      })
-      .catch(err => this.setState({ error: err.message }));
+    this.loadBooks();
   };
+
+  handleSave = id => {
+    const book = this.state.books.find(book => book.id === id);
+    API.saveBook({
+      title: book.volumeInfo.title,
+      authors: book.volumeInfo.authors,
+      description: book.volumeInfo.description,
+      image: book.volumeInfo.imageLinks.thumbnail,
+      link: book.volumeInfo.infoLink,
+      googleId: book.id
+    }).then(() => this.loadBooks());
+  };
+
   render() {
     return (
-      <div>
-        <Container style={{ minHeight: "80%" }}>
-          <h1 className="text-center">Search By Breed!</h1>
-          <Alert
-            type="danger"
-            style={{ opacity: this.state.error ? 1 : 0, marginBottom: 10 }}
-          >
-            {this.state.error}
-          </Alert>
-          <SearchForm
-            handleFormSubmit={this.handleFormSubmit}
-            handleInputChange={this.handleInputChange}
-            breeds={this.state.breeds}
-          />
-          <SearchResults results={this.state.results} />
-        </Container>
-      </div>
-    );
-  }
-}
-
-export default Search;
+        <Container>
+          <Row>
+            <Col size="md-12">
+              <Jumbotron>
+                <h1 className="text-center"><strong>Google Books Search</strong></h1>
+              </Jumbotron>
+            </Col>
+            <Col size="md-12">
+              <Card title="Book Search" icon="<fas fa-book-reader">
+              <SearchForm
+                  handleInputChange={this.handleInputChange}
+                  handleFormSubmit={this.handleFormSubmit}
+                  q={this.state.q}
+                />
+              </Card>
+            </Col>
+          </Row>
+          <Row>
+            <Col size="md-12">
+              <Card title="Results">
+                {!this.state.books.length ? (
+                  <List>
+                    {this.state.books.map(book => (
+                      <Book
+                        key={book.id}
+                        title={book.volumeInfo.title}
+                        link={book.volumeInfo.infoLink}
+                        authors={book.volumeInfo.authiors.join(", ")}
+                        description={book.volumeInfo.description}
+                        image={book.volumeInfo.imageLinks.thumbnail}
+                        Button={() => (
+                          <button
+                            onClick={() => this.handleSave(book.id)}
+                            className="btn btn-success ml-2"
+                          >
+                            Save Book
+                          </button>
+                        )}
+                      />
+                    ))}
+                </List>
+              ) : (
+                <h2 className="text-center">{this.state.message}</h2>
+              )}
+            </Card>
+            </Col>
+          </Row>
+          <Footer />
+        </Container>       
+         );
+      }
+    }
+    export default Search;

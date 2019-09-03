@@ -4,7 +4,7 @@ import "./style.css";
 function Footer() {
   return (
     <footer className="footer">
-      <span>Pupster 2017</span>
+      <span>Google Books Search built with React.js</span>
     </footer>
   );
 }
