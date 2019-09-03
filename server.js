@@ -6,8 +6,6 @@ const routes = require("./routes");
 const mongoose = require("mongoose");
 
 
-
-
 // Define middleware here
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -19,7 +17,9 @@ if (process.env.NODE_ENV === "production") {
 app.use(routes);
  
 // Connect to the Mongo DB
-mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/googleBooks");
+mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/googleBooks",
+ { useNewUrlParser: true });
+
 
 
 mongoose.connection.once("open", function(){
