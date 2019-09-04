@@ -1,21 +1,23 @@
 import React, { Component } from "react"
-import { Link, Redirect } from "react-router-dom";
+// import { Link, Redirect } from "react-router-dom";
 import Jumbotron from "../../components/Jumbotron";
 import Card from "../../components/Card";
 import API from "../../utils/API";
-import { Col, Row, Container } from "../../components/Grid";
-import { List } from "../../components/List";
-import Form from "../../components/Form";
-import Book from "../../components/Book";
-import Footer from "../../components/Footer";
+import { Container } from "../../components/Grid";
+import {Input, FormBtn} from "../../components/Form";
+// import Book from "../../components/Book";
+// import Footer from "../../components/Footer";
 
 
 class Search extends Component {
   state = {
+    books: [],
     title: "",
-    toResults: false,
-    results: []
+    author: "",
+    synopsis: "",
+    bookSearch: ""
 
+  
   };
 
 
@@ -28,41 +30,38 @@ class Search extends Component {
     });
   };
 
-  getBooks = () => {
-    API.getBooks(this.state.q)
-      .then(res => this.setState({books: res.data }))
-      .catch(() =>
-      this.setState({
-        books:[],
-        message: "No books found, try again"
-      })
-      );
-  };
+  // getBooks = () => {
+  //   API.getBooks(this.state.q)
+  //     .then(res => this.setState({books: res.data }))
+  //     .catch(() =>
+  //     this.setState({
+  //       books:[],
+  //       message: "No books found, try again"
+  //     })
+  //     );
+  // };
 
 
   handleFormSubmit = event => {
     event.preventDefault();
-    API.getNewBooks(title)
-    .then(res => {
-      console.log(res.data.items);
-      this.setState({
-        toResults: true,
-        results: res.data.items
-      });
-    })
+    API.getNewBooks(this.state.bookSearch)
+        .then(res => this.setState({books: res.data}))
+
+        .catch(err => console.log(err));
+  
   };
 
-  handleSave = id => {
-    const book = this.state.books.find(book => book.id === id);
-    API.saveBook({
-      title: book.volumeInfo.title,
-      authors: book.volumeInfo.authors,
-      description: book.volumeInfo.description,
-      image: book.volumeInfo.imageLinks.thumbnail,
-      link: book.volumeInfo.infoLink,
-      googleId: book.id
-    }).then(() => this.getBooks());
-  };
+  // handleSave = id => {
+  //   const book = this.state.books.find(book => book.id === id);
+  //   API.saveBook({
+  //     title: book.volumeInfo.title,
+  //     authors: book.volumeInfo.authors,
+  //     description: book.volumeInfo.description,
+  //     image: book.volumeInfo.imageLinks.thumbnail,
+  //     link: book.volumeInfo.infoLink,
+  //     googleId: book.id
+  //   }).then(() => this.getBooks());
+  // };
 
   render() {
     return (
@@ -75,15 +74,16 @@ class Search extends Component {
         <Container>
         <form>
             <Input
-              value={this.state.title}
+              value={this.state.bookSearch}
               onChange={this.handleInputChange}
-              name="title"
+              name="bookSearch"
               label="Book Title"
               placeholder="The Great Gatsby"
             />
             <FormBtn         
               onClick={this.handleFormSubmit}
-              className="btn btn-info"
+              type="info"
+              className="input-lg"
             >
               Search
             </FormBtn>

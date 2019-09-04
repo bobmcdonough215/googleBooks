@@ -1,43 +1,74 @@
 
 import React, { Component } from "react";
+import { Link } from 'react-router-dom';
 import Jumbotron from "../../components/Jumbotron";
 import Card from "../../components/Card";
 import { List, ListItem } from "../../components/List";
 import ClickBtn from "../../components/ClickBtn";
-import Book from "../../components/Book";
-import Footer from "../../components/Footer";
 import API from "../../utils/API";
 import { Col, Row, Container } from "../../components/Grid";
-import { List } from "../../components/List";
-import Navbar from "../../components/Nav";
 
 
 class Results extends Component {
   state = {
     books: [],
-    target: ""
+    target: "",
   };
 
   componentDidMount() {
     const data = this.props.location.data
+    if (data && data.results.length > 0) {
+
     this.setState({
-      books: data.results,
+      books: data.results.filter((value, index) => index < 5),
       target: "_blank"
+    });
+  }else{
+    this.setState({
+      noResults:true
     });
   }
 }
 
-handleSave = id => {
-  const book = this.state.books.find(book => book.id === id);
-  API.saveBook({
-    title: book.volumeInfo.title,
-    authors: book.volumeInfo.authors,
-    description: book.volumeInfo.description,
-    image: book.volumeInfo.imageLinks.thumbnail,
-    link: book.volumeInfo.infoLink,
-    googleId: book.id
-  }).then(() => this.getBooks());
-};
+saveBook = book => {
+  API.saveBook(book)
+    .then(res => {
+      const currentBooks = this.state.books;
+      const filterBooks = currentBooks.filter(book => book.id !== res.data.id);
+      this.setState({
+        books: filterBooks
+      });
+    })
+    .catch(err => console.log(err));
+}
+
+  //   title: book.volumeInfo.title,
+  //   authors: book.volumeInfo.authors,
+  //   description: book.volumeInfo.description,
+  //   image: book.volumeInfo.imageLinks.thumbnail,
+  //   link: book.volumeInfo.infoLink,
+  //   googleId: book.id
+  // }).then(() => this.getBooks());
+
+
+render(){
+    if (this.state.noResults) {
+      return (
+        <div>
+          <Jumbotron>
+            <h1 className="display-4"> Google Books Search</h1>
+            <hr className="my-4" />
+            <p className="lead">
+              <Link className="btn btn-default btn-lg" to="/" role="button">New Search</Link>
+              <Link className="btn btn-default btn-lg" to="/saved" role="button">Saved Books</Link>
+            </p>
+          </Jumbotron>
+          <Container>
+            <Link to="/">No results - click here to search again.</Link>
+          </Container>
+        </div>
+      )
+    }
 
 
 return (
@@ -85,6 +116,8 @@ return (
     </Container>
   </div>
 );
+              }
+            }
 
 export default Results;
 

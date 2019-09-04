@@ -4,12 +4,12 @@ export default {
 
     
   // Gets books from the Google API
-  getBooks: function(title) {
-    return axios.get("https://www.googleapis.com/books/v1/volumes?q=" + title);
-  },
+  searchBooks: function(query) {
+    return axios.get("/api/searchbooks", { params: { q: query } });
+  },  
   // Gets all saved books
 
-  getSavedBooks: function() {
+  getBooks: function() {
     return axios.get("/api/books/");
   },
   // Deletes the saved book with the given id

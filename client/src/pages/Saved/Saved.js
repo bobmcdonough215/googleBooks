@@ -13,7 +13,8 @@ import ClickBtn from "../../components/ClickBtn";
 class Saved extends Component {
   state = {
     books: [],
-    target: ""
+    target: "",
+    noResults: false
   };
 
   componentDidMount() {
@@ -39,7 +40,7 @@ class Saved extends Component {
   };
 
   render() {
-    return (
+    return(
       <div>
         <Jumbotron>
           <h1 className="text-center"><strong>Google Books Search</strong></h1>
@@ -64,7 +65,7 @@ class Saved extends Component {
                   <p>{book.volumeInfo.imageLinks.thumbnail}</p>
                 </div>
                 <ClickBtn
-                  key={book_id + Btn}
+                  key={book._id + "btn"}
                   btntype="info"
                   id={book._id}
                   disabled={book.link === "/"}
@@ -78,7 +79,6 @@ class Saved extends Component {
         </List>
         </Container>
       </div>
-    );
-  }
+    )}
 }
 export default Saved;
